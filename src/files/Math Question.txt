@@ -1,0 +1,59 @@
+Question 1: What is the square root of 49?
+a) 5,
+b) 6,
+c) 7,
+d) 8,
+
+Question 2: If a triangle has angles of 30 degrees, 60 degrees, and 90 degrees, what type of triangle is it?
+a) Equilateral,
+b) Isosceles,
+c) Scalene,
+d) Right,
+
+Question 3: What is the value of π (pi) rounded to two decimal places?
+a) 3.14,
+b) 3.16,
+c) 3.18,
+d) 3.20,
+
+Question 4: If a rectangle has a length of 8 units and a width of 5 units, what is its perimeter?
+a) 10 units,
+b) 18 units,
+c) 26 units,
+d) 48 units,
+
+Question 5: What is the result of 3² + 4²?
+a) 5,
+b) 7,
+c) 9,
+d) 25,
+
+Question 6: If x = 5 and y = 3, what is the value of 2x + y?
+a) 10,
+b) 13,
+c) 16,
+d) 19,
+
+Question 7: If a car travels at a speed of 60 kilometers per hour, how far will it travel in 3 hours?
+a) 120 kilometers,
+b) 180 kilometers,
+c) 240 kilometers,
+d) 300 kilometers,
+
+Question 8: What is the solution to the equation 2x - 5 = 11?
+a) x = 3,
+b) x = 6,
+c) x = 8,
+d) x = 10,
+
+Question 9: If the area of a circle is 64π square units, what is its radius?
+a) 4 units,
+b) 8 units,
+c) 16 units,
+d) 32 units,
+
+Question 10: If a shirt is on sale for 25% off its original price of $40, what is the sale price?
+a) $10,
+b) $20,
+c) $25,
+d) $30,
