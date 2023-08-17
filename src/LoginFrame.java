@@ -1,6 +1,5 @@
 import models.Student;
 import pages.ClassPage;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,14 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoginFrame extends JFrame {
+
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton changePasswordButton;
+    private JButton createAccountButton; // New button for creating an account
 
     private List<Student> students;
 
     public LoginFrame(List<Student> students) {
+
         this.students = students;
 
         setTitle("Login Page");
@@ -30,7 +32,6 @@ public class LoginFrame extends JFrame {
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
-
 
         JLabel welcomeLabel = new JLabel("Welcome To Online Education");
         welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
@@ -70,6 +71,11 @@ public class LoginFrame extends JFrame {
         changePasswordButton = new JButton("Change Password");
         panel.add(changePasswordButton, constraints);
 
+        constraints.gridx = 1;
+        constraints.gridy = 5;
+        createAccountButton = new JButton("Create New Account");
+        panel.add(createAccountButton, constraints);
+
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,9 +97,22 @@ public class LoginFrame extends JFrame {
         changePasswordButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ChangePasswordDialog dialog = new ChangePasswordDialog();
+                ChangePasswordDialog dialog = new ChangePasswordDialog(LoginFrame.this);
                 dialog.setLocationRelativeTo(LoginFrame.this);
                 dialog.setVisible(true);
+
+                setVisible(false);
+            }
+        });
+
+
+        createAccountButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CreateAccountDialog dialog = new CreateAccountDialog();
+                dialog.setLocationRelativeTo(LoginFrame.this);
+                dialog.setVisible(true);
+                setVisible(false);
             }
         });
     }
@@ -113,9 +132,9 @@ public class LoginFrame extends JFrame {
         private JTextField newPasswordField;
         private JButton changeButton;
 
-        public ChangePasswordDialog() {
+        public ChangePasswordDialog(LoginFrame loginFrame) {
             setTitle("Change Password");
-            setSize(400, 250);
+            setSize(1000, 850);
             setModal(true);
             setResizable(false);
 
@@ -157,25 +176,7 @@ public class LoginFrame extends JFrame {
             changeButton = new JButton("Change");
             panel.add(changeButton, constraints);
 
-            changeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String username = usernameField.getText();
-                    String oldPassword = oldPasswordField.getText();
-                    String newPassword = newPasswordField.getText();
 
-                    if (changePassword(username, oldPassword, newPassword)) {
-                        JOptionPane.showMessageDialog(ChangePasswordDialog.this,
-                                "Password changed successfully.",
-                                "Password Changed", JOptionPane.INFORMATION_MESSAGE);
-                        dispose();
-                    } else {
-                        JOptionPane.showMessageDialog(ChangePasswordDialog.this,
-                                "Invalid username or old password.",
-                                "Password Change Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            });
         }
 
         private boolean changePassword(String username, String oldPassword, String newPassword) {
@@ -222,6 +223,130 @@ public class LoginFrame extends JFrame {
             }
         }
     }
+
+    private class CreateAccountDialog extends JDialog {
+        private JTextField setUsernameField;
+        private JPasswordField setPasswordField;
+        private JButton createButton;
+
+        public CreateAccountDialog() {
+            setTitle("Create New Account");
+            setSize(1000, 850);
+            setModal(true);
+            setResizable(false);
+
+            JPanel panel = new JPanel(new GridBagLayout());
+            add(panel);
+
+            GridBagConstraints constraints = new GridBagConstraints();
+            constraints.insets = new Insets(10, 10, 10, 10);
+
+            constraints.gridx = 0;
+            constraints.gridy = 0;
+            panel.add(new JLabel("Set Username:"), constraints);
+
+            constraints.gridx = 1;
+            constraints.gridy = 0;
+            setUsernameField = new JTextField(20);
+            panel.add(setUsernameField, constraints);
+
+            constraints.gridx = 0;
+            constraints.gridy = 1;
+            panel.add(new JLabel("Set Password:"), constraints);
+
+            constraints.gridx = 1;
+            constraints.gridy = 1;
+            setPasswordField = new JPasswordField(20);
+            panel.add(setPasswordField, constraints);
+
+            constraints.gridx = 1;
+            constraints.gridy = 2;
+            createButton = new JButton("Create");
+            panel.add(createButton, constraints);
+
+            createButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String newUsername = setUsernameField.getText();
+                    char[] newPassword = setPasswordField.getPassword();
+                    String newPasswordString = new String(newPassword);
+
+                    if (isUsernameTaken(newUsername)) {
+                        JOptionPane.showMessageDialog(CreateAccountDialog.this,
+                                "Username is taken. Please choose a different username.",
+                                "Username Taken", JOptionPane.ERROR_MESSAGE);
+                    } else if (createAccount(newUsername, newPasswordString)) {
+                        JOptionPane.showMessageDialog(CreateAccountDialog.this,
+                                "Account created successfully.",
+                                "Account Created", JOptionPane.INFORMATION_MESSAGE);
+                        dispose(); // Close the CreateAccountDialog
+
+
+                        List<Student> updatedStudents = new ArrayList<>(students);
+                        updatedStudents.add(new Student(newUsername, newPasswordString));
+                        new LoginFrame(updatedStudents).setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(CreateAccountDialog.this,
+                                "Failed to create account.",
+                                "Account Creation Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+
+
+        }
+
+        private boolean isUsernameTaken(String username) {
+            for (Student student : students) {
+                if (username.equals(student.getUserName())) {
+                    return true;
+                }
+            }
+            try {
+                File file = new File(System.getProperty("user.dir") + "/src/files/UserName&Password.txt");
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.equals(username)) {
+                        reader.close();
+                        return true;
+                    }
+
+                    reader.readLine();
+                }
+                reader.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        }
+
+
+        private boolean createAccount(String username, String password) {
+            try {
+                File file = new File(System.getProperty("user.dir") + "/src/files/UserName&Password.txt");
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+
+                writer.newLine();
+                writer.write(username);
+
+                writer.newLine();
+                writer.write(password);
+                writer.newLine();
+                writer.close();
+
+                students.add(new Student(username, password));
+                return true;
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                return false;
+            }
+        }
+
+
+    }
+
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

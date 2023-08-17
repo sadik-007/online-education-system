@@ -42,7 +42,6 @@ public class SubjectPage extends JFrame {
             }
         };
 
-        // Set preferred size for buttons to make them bigger
         Dimension buttonSize = new Dimension(200, 50);
         mathButton.setPreferredSize(buttonSize);
         physicsButton.setPreferredSize(buttonSize);
