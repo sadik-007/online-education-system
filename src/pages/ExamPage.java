@@ -1,4 +1,5 @@
 package pages;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
@@ -6,12 +7,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 
 public class ExamPage extends JFrame {
+    private String subject;
     private String className;
 
     public ExamPage(String subject, String questionFilePath, String className) {
+        this.subject = subject;
         this.className = className;
+
         setTitle(subject + " Exam");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 850);
@@ -52,14 +57,10 @@ public class ExamPage extends JFrame {
             e.printStackTrace();
         }
 
-
         JPanel submitPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 20));
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(e -> {
-
-            Map<Integer, String> userAnswers = new HashMap<>();
-
-
+            Map<Integer, String> userAnswers = collectUserAnswers(panel);
             new ResultPage(subject, userAnswers, className).setVisible(true);
             dispose();
         });
@@ -73,22 +74,38 @@ public class ExamPage extends JFrame {
         add(mainPanel);
     }
 
-    private void openSubjectPage() {
-        SwingUtilities.invokeLater(() -> {
-            String[] classNames = {"Class 9", "Class 10", "Class 11", "Class 12", "Admission"};
-            for (String className : classNames) {
-                new SubjectPage(className).setVisible(true);
+    private Map<Integer, String> collectUserAnswers(JPanel panel) {
+        Map<Integer, String> userAnswers = new HashMap<>();
+        String[] answers= new String[10];
+        Component[] components = panel.getComponents();
+        int questionNumber = 0;
+        String selectedAnswer = null;
+        for (Component component : components) {
+            if (component instanceof JRadioButton) {
+                JRadioButton radioButton = (JRadioButton) component;
+                if (radioButton.isSelected()) {
+                    selectedAnswer = radioButton.getText();
+                }
             }
-        });
+            if (component instanceof JLabel && ((JLabel) component).getText().startsWith("Question")) {
+                if (selectedAnswer != null) {
+                    userAnswers.put(questionNumber, selectedAnswer);
+                }
+                selectedAnswer = null;
+                questionNumber++;
+            }
+        }
+        return userAnswers;
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             String[] subjects = {"Math", "Physics", "Chemistry", "Biology"};
             for (String subject : subjects) {
-                String filePath = System.getProperty("user.dir") + "/src/files/" + subject + ".txt";
-                String questionFilePath = System.getProperty("user.dir") + "/src/files/" + subject + " Question.txt";
-                new ContentDisplayPage(subject, filePath, questionFilePath, "Class 9").setVisible(true);
+                String filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "files" + File.separator + subject + ".txt";
+                String questionFilePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "files" + File.separator + subject + " Question.txt";
+                new ExamPage(subject, questionFilePath, "Class 9").setVisible(true);
             }
         });
     }

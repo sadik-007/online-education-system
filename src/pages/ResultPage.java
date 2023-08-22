@@ -1,4 +1,5 @@
 package pages;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
@@ -6,12 +7,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 
 public class ResultPage extends JFrame {
     private String subject;
 
     public ResultPage(String subject, Map<Integer, String> userAnswers, String className) {
         this.subject = subject;
+
         setTitle(subject + " Exam Result");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -26,7 +29,7 @@ public class ResultPage extends JFrame {
         int correctAnswers = checkAnswers(subject, userAnswers);
 
         resultTextArea.append("Subject: " + subject + "\n");
-        resultTextArea.append( className + "\n");
+        resultTextArea.append(className + "\n");
         resultTextArea.append("Total Questions: " + totalQuestions + "\n");
         resultTextArea.append("Correct Answers: " + correctAnswers + "\n");
         resultTextArea.append("Incorrect Answers: " + (totalQuestions - correctAnswers) + "\n");
@@ -51,10 +54,9 @@ public class ResultPage extends JFrame {
             int questionNumber = 1;
             while ((line = reader.readLine()) != null) {
                 String correctAnswer = line.trim();
-
                 String userAnswer = userAnswers.get(questionNumber);
 
-                if (userAnswer != null && userAnswer.equalsIgnoreCase(correctAnswer)) {
+                if (userAnswer != null && userAnswer.equals(correctAnswer)) {
                     correctAnswers++;
                 }
                 questionNumber++;
@@ -62,12 +64,12 @@ public class ResultPage extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return correctAnswers;
     }
 
+
     private String getQuestionAnswerFilePath(String subject) {
-        return System.getProperty("user.dir") + "/src/files/" + subject + " QuestionAnswer.txt";
+        return System.getProperty("user.dir") + File.separator + "src" + File.separator + "files" + File.separator + subject + " QuestionAnswer.txt";
     }
 
     private void openSubjectPage(String className) {
@@ -81,8 +83,6 @@ public class ResultPage extends JFrame {
 
             for (String className : classes) {
                 for (String subject : subjects) {
-                    String filePath = System.getProperty("user.dir") + "/src/files/" + subject + ".txt";
-                    String questionFilePath = System.getProperty("user.dir") + "/src/files/" + subject + " Question.txt";
                     Map<Integer, String> userAnswers = readUserAnswersFromFile(subject);
                     new ResultPage(subject, userAnswers, className).setVisible(true);
                 }
@@ -94,6 +94,7 @@ public class ResultPage extends JFrame {
         Map<Integer, String> userAnswers = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(getUserAnswersFilePath(subject)))) {
+            System.out.println("ans file----------"+ reader);
             String line;
             int questionNumber = 1;
             while ((line = reader.readLine()) != null) {
@@ -108,6 +109,8 @@ public class ResultPage extends JFrame {
     }
 
     private static String getUserAnswersFilePath(String subject) {
-        return System.getProperty("user.dir") + "/src/files/" + subject + " Answers.txt";
+        return System.getProperty("user.dir") + File.separator + "src" + File.separator + "files" + File.separator + subject + " QuestionAnswer.txt";
     }
 }
+
+
