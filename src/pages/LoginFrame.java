@@ -1,5 +1,5 @@
+package pages;
 import models.Student;
-import pages.ClassPage;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,7 +14,7 @@ public class LoginFrame extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton changePasswordButton;
-    private JButton createAccountButton; // New button for creating an account
+    private JButton createAccountButton;
 
     private List<Student> students;
 
@@ -279,7 +279,7 @@ public class LoginFrame extends JFrame {
                         JOptionPane.showMessageDialog(CreateAccountDialog.this,
                                 "Account created successfully.",
                                 "Account Created", JOptionPane.INFORMATION_MESSAGE);
-                        dispose(); // Close the CreateAccountDialog
+                        dispose();
 
 
                         List<Student> updatedStudents = new ArrayList<>(students);

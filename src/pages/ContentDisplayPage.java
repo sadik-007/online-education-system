@@ -4,48 +4,58 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class ContentDisplayPage extends JFrame {
-    public ContentDisplayPage(String title, String filePath, String questionFilePath) {
-        setTitle(title);
+    public ContentDisplayPage(String subjectName, String filePath, String questionFilePath, String className) {
+        setTitle(subjectName + " Content");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(1000, 850);
+        setSize(800, 600);
         setLocationRelativeTo(null);
 
-        JTextArea textArea = new JTextArea();
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        JTextArea contentTextArea = new JTextArea();
+        contentTextArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(contentTextArea);
 
-        try {
-            Path file = Path.of(filePath);
-            String content = Files.readString(file);
-            textArea.setText(content);
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                contentTextArea.append(line + "\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        JPanel buttonPanel = new JPanel();
-
-
         JButton participateButton = new JButton("Participate Exam");
-        Dimension buttonSize = new Dimension(200, 50);
-        participateButton.setPreferredSize(buttonSize);
-
-        buttonPanel.add(participateButton);
-
         participateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new ExamPage(title, questionFilePath).setVisible(true);
-
-                setVisible(false);
+                openExamPage(subjectName, questionFilePath, className);
             }
         });
 
-        add(scrollPane, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(participateButton, BorderLayout.SOUTH);
+
+        add(panel);
+    }
+
+    private void openExamPage(String subjectName, String questionFilePath, String className) {
+        new ExamPage(subjectName, questionFilePath, className).setVisible(true);
+        dispose();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            String[] subjects = {"Math", "Physics", "Chemistry", "Biology"};
+            for (String subject : subjects) {
+                String filePath = System.getProperty("user.dir") + "/src/files/" + subject + ".txt";
+                String questionFilePath = System.getProperty("user.dir") + "/src/files/" + subject + " Question.txt";
+                new ContentDisplayPage(subject, filePath, questionFilePath, "Class 9").setVisible(true);
+            }
+        });
     }
 }

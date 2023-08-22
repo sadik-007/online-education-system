@@ -1,15 +1,17 @@
 package pages;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SubjectPage extends JFrame {
-    public SubjectPage(String buttonText) {
-        setTitle("Subjects");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 850);
+    private String className;
+
+    public SubjectPage(String className) {
+        this.className = className;
+        setTitle(className + " Subjects");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(800, 600);
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel();
@@ -18,53 +20,55 @@ public class SubjectPage extends JFrame {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = 0;
         constraints.gridy = GridBagConstraints.RELATIVE;
-        constraints.insets = new Insets(10, 10, 10, 10);
+        constraints.insets = new Insets(10, 0, 10, 0);
 
-        JLabel messageLabel = new JLabel("Which subject's elements do you need?");
-        messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(messageLabel, constraints);
+        JLabel titleLabel = new JLabel("Subjects for " + className);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(titleLabel, constraints);
 
-        JButton mathButton = new JButton("Math");
-        JButton physicsButton = new JButton("Physics");
-        JButton chemistryButton = new JButton("Chemistry");
-        JButton biologyButton = new JButton("Biology");
+        String[] subjects = {"Math", "Physics", "Chemistry", "Biology"};
+        for (String subject : subjects) {
+            JButton subjectButton = new JButton(subject);
+            subjectButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            subjectButton.setPreferredSize(new Dimension(180, 50));
+            subjectButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    openContentDisplayPage(subject);
+                }
+            });
+            panel.add(subjectButton, constraints);
+        }
 
-        ActionListener buttonListener = new ActionListener() {
+        JButton backButton = new JButton("Back to Class Page");
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        backButton.setPreferredSize(new Dimension(180, 50));
+        backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JButton clickedButton = (JButton) e.getSource();
-                String buttonText = clickedButton.getText();
-
-                String filePath = System.getProperty("user.dir") +"/src/files/"+ buttonText + ".txt";
-                String questionFilePath = System.getProperty("user.dir") +"/src/files/" + buttonText + " Question.txt";
-                new ContentDisplayPage(buttonText, filePath, questionFilePath).setVisible(true);
-                setVisible(false);
+                new ClassPage().setVisible(true);
+                dispose();
             }
-        };
-
-        Dimension buttonSize = new Dimension(200, 50);
-        mathButton.setPreferredSize(buttonSize);
-        physicsButton.setPreferredSize(buttonSize);
-        chemistryButton.setPreferredSize(buttonSize);
-        biologyButton.setPreferredSize(buttonSize);
-
-        mathButton.addActionListener(buttonListener);
-        physicsButton.addActionListener(buttonListener);
-        chemistryButton.addActionListener(buttonListener);
-        biologyButton.addActionListener(buttonListener);
-
-        panel.add(mathButton, constraints);
-        panel.add(physicsButton, constraints);
-        panel.add(chemistryButton, constraints);
-        panel.add(biologyButton, constraints);
+        });
+        panel.add(backButton, constraints);
 
         add(panel);
     }
 
+    private void openContentDisplayPage(String subject) {
+        String filePath = System.getProperty("user.dir") + "/src/files/" + subject + ".txt";
+        String questionFilePath = System.getProperty("user.dir") + "/src/files/" + subject + " Question.txt";
+        new ContentDisplayPage(subject, filePath, questionFilePath, className).setVisible(true);
+        dispose();
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            String buttonText = null;
-            new SubjectPage(buttonText).setVisible(true);
+            String[] classNames = {"Class 9", "Class 10", "Class 11", "Class 12", "Admission"};
+            for (String className : classNames) {
+                new SubjectPage(className).setVisible(true);
+            }
         });
     }
 }

@@ -1,5 +1,4 @@
 package pages;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,10 +32,10 @@ public class ClassPage extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JButton clickedButton = (JButton) e.getSource();
-                String buttonText = clickedButton.getText();
+                String className = clickedButton.getText();
 
+                new SubjectPage(className).setVisible(true);
                 setVisible(false);
-                new SubjectPage(buttonText).setVisible(true);
             }
         };
 
@@ -45,7 +44,6 @@ public class ClassPage extends JFrame {
         class11Button.addActionListener(buttonListener);
         class12Button.addActionListener(buttonListener);
         admissionButton.addActionListener(buttonListener);
-
 
         Dimension buttonSize = new Dimension(200, 50);
         class9Button.setPreferredSize(buttonSize);
